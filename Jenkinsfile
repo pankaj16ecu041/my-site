@@ -1,11 +1,7 @@
 pipeline {
-    // 1. Where should this run? 'any' means any available computer/node.
     agent any
 
-    // 2. The sequence of events
     stages {
-
-        // Stage 1: Getting the code
         stage('Checkout') {
             steps {
                 echo 'Step 1: Grabbing the latest code from GitHub...'
@@ -13,20 +9,20 @@ pipeline {
             }
         }
 
-        // Stage 2: Simulating a build
         stage('Build') {
             steps {
                 echo 'Step 2: Building the TeachMe application...'
-                // For now, we just print a message to see it work
+                // Using 'bat' for Windows
                 bat 'echo "The build is running!"'
             }
         }
 
-        // Stage 3: Running a test
         stage('Test') {
             steps {
                 echo 'Step 3: Checking if the code has errors...'
-                sh 'python3 --version'
+                // CHANGED: used 'bat' instead of 'sh' 
+                // CHANGED: used 'python' instead of 'python3'
+                bat 'python --version'
             }
         }
     }

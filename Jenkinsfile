@@ -18,7 +18,7 @@ pipeline {
             steps {
                 echo 'Step 2: Building the TeachMe application...'
                 // For now, we just print a message to see it work
-                sh 'echo "The build is running!"'
+                bat 'echo "The build is running!"'
             }
         }
 

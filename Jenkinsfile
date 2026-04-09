@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment{
-        AWS_REGION - 'ap-south-1'
+        AWS_REGION = 'ap-south-1'
     }
     stages {
         stage('Checkout') {
@@ -12,9 +12,9 @@ pipeline {
         }
         stage('tag the image'){
             steps{
-                script(
-                    Image_tag - 'latest'
-                )
+                script{
+                    Image_tag = 'latest'
+                }
             }
         }
         stage('Login to ECR'){

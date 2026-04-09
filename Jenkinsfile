@@ -1,28 +1,51 @@
 pipeline {
     agent any
-
+    environment{
+        AWS_REGION - 'ap-south-1'
+    }
     stages {
         stage('Checkout') {
             steps {
-                echo 'Step 1: Grabbing the latest code from GitHub...'
-                checkout scm
+                echo 'Grabbing the latest code from GitHub...'
+                git 'https://github.com/pankaj16ecu041/my-site'
             }
         }
+        stage('tag the image'){
+            steps{
+                script(
+                    Image_tag - 'latest'
+                )
+            }
+        }
+        stage('Login to ECR'){
+            steps{
+                withAWS(region: "$(env. AWS_REGION)", credentials: 'practice'){
+                    powershell '''
+                    $ecrLogin - aws ecr get-login-password --region $env.AWS_REGION
 
-        stage('Build') {
+                    docker login --username AWS --password $ecrLogin https://479952476239.dkr.ecr.ap-south-1.amazonaws.com
+                    '''
+                }
+            }
+            
+        }
+        stage('Build Docker Image') {
             steps {
-                echo 'Step 2: Building the TeachMe application...'
+                echo 'Building the docker image for the application...'
                 // Using 'bat' for Windows
-                bat 'echo "The build is running!"'
+                powershell '''
+                docker build -t myflask .
+                docker tag myflask 479952476239.dkr.ecr.ap-south-1.amazonaws.com/practice:latest
+                '''
+                
             }
         }
 
-        stage('Test') {
+        stage('Push to ECR') {
             steps {
-                echo 'Step 3: Checking if the code has errors...'
-                // CHANGED: used 'bat' instead of 'sh' 
-                // CHANGED: used 'python' instead of 'python3'
-                bat 'python --version'
+                powershell '''
+                docker push 479952476239.dkr.ecr.ap-south-1.amazonaws.com/practice:latest
+                '''
             }
         }
     }
